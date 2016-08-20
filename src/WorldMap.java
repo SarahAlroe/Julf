@@ -9,6 +9,7 @@ class WorldMap {
     private int mapWidth;
     private BufferedImage map;
     private int[][] mapTable;
+    private Config config;
 
     public WorldMap(Julf parrent, BufferedImage cMap) {
         main = parrent;
@@ -16,6 +17,7 @@ class WorldMap {
         mapWidth = map.getWidth();
         mapHeight = map.getHeight();
         mapTable = new int[mapWidth][mapHeight];
+        config = Config.getInstance();
         int x = 0;
         while (x < mapWidth) {
             int y = 0;
@@ -29,8 +31,11 @@ class WorldMap {
 
     public int getTile(int x, int y) {
         if (x >= mapWidth || y >= mapHeight || x < 0 || y < 0) {
-            return main.conf.emptyColor;
+            return config.getEmptyColor();
         }
         return mapTable[x][y];
+    }
+    public boolean hasTile (int x, int y){
+        return (getTile(x,y) != Config.getInstance().getEmptyColor());
     }
 }
