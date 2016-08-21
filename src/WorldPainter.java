@@ -29,9 +29,9 @@ class WorldPainter extends Component {
 
         int lines = 0;
 //        double minRelVecX = Math.sin(Math.toRadians(main.conf.fov/2)+90) * main.conf.incLength;
-        g.setColor(Color.darkGray);
+        g.setColor(Color.blue);
         g.fillRect(0,0,size.width,size.height/2);
-        g.setColor(Color.lightGray);
+        g.setColor(Color.green);
         g.fillRect(0,size.height/2,size.width,size.height);
         while (lines < size.width) {
             int lineHeight = 0;

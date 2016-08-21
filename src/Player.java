@@ -37,15 +37,35 @@ class Player implements GameEventListener{
         x = newX;
         y = newY;
     }
+//
+//    void move(double addX, double addY) {
+//        double resX = x+addX;
+//        double resY = y+addY;
+//        if(!map.hasTile((int) resX, (int)resY)){
+//            x=resX;
+//            y=resY;
+//        }else {
+//            if ((int)x==(int)resX){
+//                x=resX;
+//            }
+//            if ((int)y==(int)resY){
+//                y=resY;
+//            }
+//        }
+//    }
+
 
     void move(double addX, double addY) {
         double resX = x+addX;
         double resY = y+addY;
-        if(!map.hasTile((int) resX, (int)resY)){
+        if(!map.hasTile((int) resX, (int) y)){
             x=resX;
+        }
+        if (!map.hasTile((int) x, (int) resY)) {
             y=resY;
         }
     }
+
 
     public void rotate(double angle) {
         orientation += angle;
