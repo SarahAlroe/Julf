@@ -1,18 +1,24 @@
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
 /**
  * Created by silasa on 8/20/16.
  */
 class WorldPainter extends Component {
-    private Julf main;
-    private Config config;
-    private BufferedImage wallTexture;
+    public static final double WALL_HEIGHT = 5d;
+    private final WorldMap worldMap;
+    private final Config config;
+    private final BufferedImage wallTexture;
+    private final Player player;
+    private Dimension screenSize;
 
-    public WorldPainter(Julf parrent) {
-        main = parrent;
+    public WorldPainter(Julf main) {
         config = Config.getInstance();
-        wallTexture = main.loadImage("bricks");
+        wallTexture = ImageHelper.loadImage("bricks");
+        player = main.getPlayer();
+        worldMap = main.getWorldMap();
+        screenSize = getSize();
     }
 
     public Dimension getPreferredSize() {
@@ -20,88 +26,76 @@ class WorldPainter extends Component {
     }
 
     public void paint(Graphics g) {
-        Dimension size = getSize();
-        double playerXPos = main.player.getPos()[0];
-        double playerYPos = main.player.getPos()[1];
-        int fov = config.getFov();
-        double playerOrient = main.player.getOrientation() - Math.toRadians(fov) / 2;
-        double lineAngle = Math.toRadians((double) fov) / (double) size.width;
+        paintBackground(g, screenSize);
 
-        int lines = 0;
-//        double minRelVecX = Math.sin(Math.toRadians(main.conf.fov/2)+90) * main.conf.incLength;
-        g.setColor(Color.blue);
-        g.fillRect(0,0,size.width,size.height/2);
-        g.setColor(Color.green);
-        g.fillRect(0,size.height/2,size.width,size.height);
-        while (lines < size.width) {
-            int lineHeight = 0;
+        paintRays(g);
+    }
+
+    private void paintRays(Graphics g) {
+        Point2D.Double playerPos = new Point2D.Double(player.getPos()[0], player.getPos()[1]);
+        int fov = config.getFov();
+        double playerOrient = player.getOrientation() - Math.toRadians(fov) / 2;
+        double lineAngle = Math.toRadians((double) fov) / (double) screenSize.width;
+
+        for (int line = 0; line < screenSize.width; line++) {
+            int lineHeight;
             boolean hasCollided = false;
-            int collide = config.getEmptyColor();
+            int collideColor;
             double maxLength = config.getMaxLength();
 
-            double A = lineAngle * lines;
-            double C = Math.toRadians(90 - fov / 2);
-            double B = Math.toRadians(180) - A - C;
-            double b = maxLength;
-            double c = b / Math.sin(B) * Math.sin(C);
-            double newMaxLength = b+c;
-            double fishEyeCorrection = c / b;
-//            System.out.println(fishEyeCorrection);
-
-            double cAngle = playerOrient + lineAngle * (double) lines;
+            double cAngle = playerOrient + lineAngle * (double) line;
             double incLength = config.getIncLength();
-            double vecX = Math.sin(cAngle) * incLength;
-//            double relVecX = Math.sin(minRelVecX+lineAngle*lines);
-            double vecY = Math.cos(cAngle) * incLength;
+            Vector2D lineVector = new Vector2D(Math.sin(cAngle) * incLength, Math.cos(cAngle) * incLength);
 
             double lineLength = 0;
-            double cX = playerXPos;
-            double cY = playerYPos;
+            Point2D.Double currentRayPosition = new Point2D.Double(playerPos.getX(),playerPos.getY());
 
-            int prevX = (int) Math.floor(cX);
-            int prevY = (int) Math.floor(cY);
+            Point previousPosition = new Point((int) currentRayPosition.getX(),(int) currentRayPosition.getX());
 
-            while (lineLength < newMaxLength) {
+            while (lineLength < maxLength) {
                 lineLength += incLength;
-                cX += vecX;
-                cY += vecY;
-                int cXF = (int) Math.floor(cX);
-                int cYF = (int) Math.floor(cY);
-                if (cXF == prevX && cYF == prevY) {
+                addVectorToPoint(currentRayPosition, lineVector);
+
+                Point flooredPosition = new Point((int) currentRayPosition.getX(), (int) currentRayPosition.getY());
+                if (flooredPosition.equals(previousPosition)) {
                     continue;
                 }
-                prevX = cXF;
-                prevY = cYF;
-                collide = main.wm.getTile(cXF, cYF);
-                if (collide != config.getEmptyColor()) {
-                    hasCollided = true;
+                previousPosition.setLocation(flooredPosition);
+                hasCollided = worldMap.hasTile(flooredPosition.x, flooredPosition.y);
+                if (hasCollided) {
+                    collideColor = worldMap.getTile(flooredPosition.x, flooredPosition.y);
                     break;
                 }
             }
             if (hasCollided) {
-//                double fishEyeCorrection = (relVecX-minRelVecX)*main.conf.maxLength;
-//                double fishEyeCorrection = Math.sin((lines-(size.width/2)*lineAngle+Math.toRadians(90)))-Math.sin((0-(size.width/2)*lineAngle+Math.toRadians(90)));
-                double correctAngle = 1 - lineAngle * Math.abs(lines - size.width / 2);
-//                System.out.println(correctAngle);
-//                lineHeight = (int) Math.round((lineLength*Math.cos(correctAngle)) / main.conf.maxLength * (size.height / 2d - 10d));
-
-                double verticalAngle = Math.atan(5d/(2d*lineLength));
-                lineHeight = (int) (size.height/Math.tan(Math.toRadians(fov))*Math.tan(verticalAngle));
-                int roofLineHeight = (size.height-lineHeight)/2;
-                //lineHeight = (int) Math.round((lineLength) / newMaxLength * (size.height / 2d - 10d));
-//                System.out.println(""+vecX+", "+minVecX+", "+(vecX-minVecX));
-                Color cColor = new Color(collide);
-                Color nColor = ColorUtils.stain(cColor, lineLength / newMaxLength * 0.75);
-                g.setColor(nColor);
-//                g.drawLine(lines, lineHeight, lines, size.height - lineHeight);
-                int textureCoord = (int) Math.round((cX+cY)* wallTexture.getWidth())% wallTexture.getWidth();
-                g.drawImage(wallTexture,lines,roofLineHeight,lines+1,size.height-roofLineHeight,textureCoord,0,textureCoord+1, wallTexture.getHeight(),this);
+                double verticalAngle = Math.atan(WALL_HEIGHT /(2d*lineLength));
+                lineHeight = (int) (screenSize.height/Math.tan(Math.toRadians(fov))*Math.tan(verticalAngle));
+                int roofLineHeight = (screenSize.height-lineHeight)/2;
+                int textureColumn = (int) Math.round((currentRayPosition.x+currentRayPosition.y)* wallTexture.getWidth())% wallTexture.getWidth();
+                g.drawImage(wallTexture,line,roofLineHeight,line+1, screenSize.height-roofLineHeight,textureColumn,0,textureColumn+1, wallTexture.getHeight(),this);
             } else {
-                lineHeight = size.height / 2 - 10;
-                g.setColor(Color.darkGray);
-                g.drawLine(lines, lineHeight, lines, size.height - lineHeight);
+                drawFog(g, line);
             }
-            lines++;
         }
+    }
+
+    private void addVectorToPoint(Point2D.Double currentRayPosition, Vector2D lineVector) {
+        currentRayPosition.x+=lineVector.getWidth();
+        currentRayPosition.y+= lineVector.getHeight();
+
+    }
+
+    private void drawFog(Graphics g, int line) {
+        int lineHeight;
+        lineHeight = screenSize.height / 2 - 10;
+        g.setColor(Color.black);
+        g.drawLine(line, lineHeight, line, screenSize.height - lineHeight);
+    }
+
+    private void paintBackground(Graphics g, Dimension screenSize) {
+        g.setColor(Color.blue);
+        g.fillRect(0,0, screenSize.width, screenSize.height/2);
+        g.setColor(Color.green);
+        g.fillRect(0, screenSize.height/2, screenSize.width, screenSize.height);
     }
 }
