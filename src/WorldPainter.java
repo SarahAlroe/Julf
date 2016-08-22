@@ -9,16 +9,17 @@ class WorldPainter extends Component {
     public static final double WALL_HEIGHT = 5d;
     private final WorldMap worldMap;
     private final Config config;
-    private final BufferedImage wallTexture;
+    private TextureHandler textureHandler;
     private final Player player;
     private Dimension screenSize;
+    private BufferedImage collideTexture;
 
     public WorldPainter(Julf main) {
         config = Config.getInstance();
-        wallTexture = ImageHelper.loadImage("bricks");
         player = main.getPlayer();
         worldMap = main.getWorldMap();
-        screenSize = getSize();
+        screenSize = getPreferredSize();
+        textureHandler = TextureHandler.getInstance();
     }
 
     public Dimension getPreferredSize() {
@@ -26,6 +27,7 @@ class WorldPainter extends Component {
     }
 
     public void paint(Graphics g) {
+        screenSize = getSize();
         paintBackground(g, screenSize);
 
         paintRays(g);
@@ -64,6 +66,7 @@ class WorldPainter extends Component {
                 hasCollided = worldMap.hasTile(flooredPosition.x, flooredPosition.y);
                 if (hasCollided) {
                     collideColor = worldMap.getTile(flooredPosition.x, flooredPosition.y);
+                    collideTexture = textureHandler.getTexture(collideColor);
                     break;
                 }
             }
@@ -71,8 +74,8 @@ class WorldPainter extends Component {
                 double verticalAngle = Math.atan(WALL_HEIGHT /(2d*lineLength));
                 lineHeight = (int) (screenSize.height/Math.tan(Math.toRadians(fov))*Math.tan(verticalAngle));
                 int roofLineHeight = (screenSize.height-lineHeight)/2;
-                int textureColumn = (int) Math.round((currentRayPosition.x+currentRayPosition.y)* wallTexture.getWidth())% wallTexture.getWidth();
-                g.drawImage(wallTexture,line,roofLineHeight,line+1, screenSize.height-roofLineHeight,textureColumn,0,textureColumn+1, wallTexture.getHeight(),this);
+                int textureColumn = (int) Math.round((currentRayPosition.x+currentRayPosition.y)* collideTexture.getWidth())% collideTexture.getWidth();
+                g.drawImage(collideTexture,line,roofLineHeight,line+1, screenSize.height-roofLineHeight,textureColumn,0,textureColumn+1, collideTexture.getHeight(),this);
             } else {
                 drawFog(g, line);
             }
@@ -93,9 +96,9 @@ class WorldPainter extends Component {
     }
 
     private void paintBackground(Graphics g, Dimension screenSize) {
-        g.setColor(Color.blue);
+        g.setColor(Color.darkGray);
         g.fillRect(0,0, screenSize.width, screenSize.height/2);
-        g.setColor(Color.green);
+        g.setColor(Color.gray);
         g.fillRect(0, screenSize.height/2, screenSize.width, screenSize.height);
     }
 }

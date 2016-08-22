@@ -11,6 +11,7 @@ public class Julf extends JApplet {
     private Player player;
     private Config conf;
     private GameEventBroadcaster gameEventBroadcaster;
+    private TextureHandler textureHandler;
 
     public static void main(String[] args) {
         JFrame f = new JFrame("Julf");
@@ -46,12 +47,13 @@ public class Julf extends JApplet {
     }
 
     private void initGameElements() {
-        BufferedImage mapFile = ImageHelper.loadImage("map2");
+        BufferedImage mapFile = ImageHelper.loadImage("map3");
         conf = Config.getInstance();
         worldMap = new WorldMap(this, mapFile);
         player = new Player(6.0, 6.0);
         player.setMap(worldMap);
         gameEventBroadcaster = GameEventBroadcaster.getInstance();
+        textureHandler = TextureHandler.getInstance();
     }
 
     private void setupPanel() {
