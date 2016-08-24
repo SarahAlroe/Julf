@@ -5,10 +5,20 @@ class Config {
     public static final double PLAYER_TURNSPEED = 0.03;
     public static final double PLAYER_SPEED = 0.1;
     private static Config instance = new Config();
-    private int fov = 60;
+    private int fov = 75;
     private double maxLength = 30.0;
     private double incLength = 0.01;
     private int emptyColor = -16777216;
+
+    public boolean isHeadBobbing() {
+        return headBobbing;
+    }
+
+    public void setHeadBobbing(boolean headBobbing) {
+        this.headBobbing = headBobbing;
+    }
+
+    private boolean headBobbing = true;
 
     public static Config getInstance() {
         return instance;

@@ -1,12 +1,17 @@
 /**
  * Created by silasa on 8/20/16.
  */
-class Player implements GameEventListener{
+class Player implements GameEventListener {
     private double orientation;
     private double x;
     private double y;
     private boolean isMovingForward, isMovingBackwards, isMovingLeft, isMovingRight, isRotatingLeft, isRotatingRight;
     private WorldMap map;
+    private int verticalOrientation;
+    private double headBobPosition;
+    private int headBobAmplitude = 10;
+    private double headBobSpeed = 0.1;
+    private Config config = Config.getInstance();
 
     public Player(double xpos, double ypos) {
         x = xpos;
@@ -15,14 +20,14 @@ class Player implements GameEventListener{
         GameEventBroadcaster.getInstance().addEventListener(this);
     }
 
-    public void setMap(WorldMap map) {
-        this.map = map;
-    }
-
     public Player(double xpos, double ypos, double orient) {
         x = xpos;
         y = ypos;
         orientation = orient;
+    }
+
+    public void setMap(WorldMap map) {
+        this.map = map;
     }
 
     public double[] getPos() {
@@ -38,58 +43,7 @@ class Player implements GameEventListener{
         y = newY;
     }
 
-    void move(double addX, double addY) {
-        double resX = x+addX;
-        double resY = y+addY;
-        if(!map.hasTile((int) resX, (int) y)){
-            x=resX;
-        }
-        if (!map.hasTile((int) x, (int) resY)) {
-            y=resY;
-        }
-    }
-
-
-    public void rotate(double angle) {
-        orientation += angle;
-
-    }
-
-    public void moveForward() {
-        double addX = Math.sin(orientation) * Config.PLAYER_SPEED;
-        double addY = Math.cos(orientation) * Config.PLAYER_SPEED;
-        move(addX, addY);
-    }
-
-    public void moveBackwards() {
-        double addX = Math.sin(orientation) * Config.PLAYER_SPEED;
-        double addY = Math.cos(orientation) * Config.PLAYER_SPEED;
-        move(-addX, -addY);
-    }
-
-    public void turnLeft() {
-        rotate(-Config.PLAYER_TURNSPEED);
-    }
-
-    public void turnRight() {
-        rotate(Config.PLAYER_TURNSPEED);
-    }
-
-    public void strafeLeft() {
-        double newOrientation = orientation + Math.toRadians(90);
-        double addX = Math.sin(newOrientation) * Config.PLAYER_SPEED;
-        double addY = Math.cos(newOrientation) * Config.PLAYER_SPEED;
-        move(-addX, -addY);
-    }
-
-    public void strafeRight() {
-        double newOrientation = orientation + Math.toRadians(90);
-        double addX = Math.sin(newOrientation) * Config.PLAYER_SPEED;
-        double addY = Math.cos(newOrientation) * Config.PLAYER_SPEED;
-        move(addX, addY);
-    }
-
-    public void toggleMovement(Direction direction, boolean isMoving){
+    public void toggleMovement(Direction direction, boolean isMoving) {
         switch (direction) {
             case MOVE_FORWARD:
                 isMovingForward = isMoving;
@@ -112,8 +66,15 @@ class Player implements GameEventListener{
         }
     }
 
+    public int getVerticalOrientation() {
+        return verticalOrientation;
+    }
+
     @Override
     public void onGameTick() {
+        if (config.isHeadBobbing()) {
+            moveHead();
+        }
         if (isMovingForward) {
             moveForward();
         }
@@ -132,5 +93,63 @@ class Player implements GameEventListener{
         if (isRotatingRight) {
             turnRight();
         }
+    }
+
+    private void moveHead() {
+        if (isMovingForward || isMovingBackwards || isMovingRight || isMovingLeft || headBobPosition > 0.1) {
+            headBobPosition += headBobSpeed;
+            headBobPosition = headBobPosition % 2d;
+            verticalOrientation = (int) (headBobAmplitude * Math.sin(headBobPosition * Math.PI));
+        }
+    }
+
+    public void moveForward() {
+        double addX = Math.sin(orientation) * Config.PLAYER_SPEED;
+        double addY = Math.cos(orientation) * Config.PLAYER_SPEED;
+        move(addX, addY);
+    }
+
+    public void moveBackwards() {
+        double addX = Math.sin(orientation) * Config.PLAYER_SPEED;
+        double addY = Math.cos(orientation) * Config.PLAYER_SPEED;
+        move(-addX, -addY);
+    }
+
+    public void strafeLeft() {
+        double newOrientation = orientation + Math.toRadians(90);
+        double addX = Math.sin(newOrientation) * Config.PLAYER_SPEED;
+        double addY = Math.cos(newOrientation) * Config.PLAYER_SPEED;
+        move(-addX, -addY);
+    }
+
+    public void strafeRight() {
+        double newOrientation = orientation + Math.toRadians(90);
+        double addX = Math.sin(newOrientation) * Config.PLAYER_SPEED;
+        double addY = Math.cos(newOrientation) * Config.PLAYER_SPEED;
+        move(addX, addY);
+    }
+
+    public void turnLeft() {
+        rotate(-Config.PLAYER_TURNSPEED);
+    }
+
+    public void turnRight() {
+        rotate(Config.PLAYER_TURNSPEED);
+    }
+
+    void move(double addX, double addY) {
+        double resX = x + addX;
+        double resY = y + addY;
+        if (!map.hasTile((int) resX, (int) y)) {
+            x = resX;
+        }
+        if (!map.hasTile((int) x, (int) resY)) {
+            y = resY;
+        }
+    }
+
+    public void rotate(double angle) {
+        orientation += angle;
+
     }
 }

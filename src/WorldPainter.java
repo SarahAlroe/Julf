@@ -75,7 +75,7 @@ class WorldPainter extends Component {
                 lineHeight = (int) (screenSize.height/Math.tan(Math.toRadians(fov))*Math.tan(verticalAngle));
                 int roofLineHeight = (screenSize.height-lineHeight)/2;
                 int textureColumn = (int) Math.round((currentRayPosition.x+currentRayPosition.y)* collideTexture.getWidth())% collideTexture.getWidth();
-                g.drawImage(collideTexture,line,roofLineHeight,line+1, screenSize.height-roofLineHeight,textureColumn,0,textureColumn+1, collideTexture.getHeight(),this);
+                g.drawImage(collideTexture,line,roofLineHeight+player.getVerticalOrientation(),line+1, screenSize.height-roofLineHeight+player.getVerticalOrientation(),textureColumn,0,textureColumn+1, collideTexture.getHeight(),this);
             } else {
                 drawFog(g, line);
             }
@@ -92,13 +92,13 @@ class WorldPainter extends Component {
         int lineHeight;
         lineHeight = screenSize.height / 2 - 10;
         g.setColor(Color.black);
-        g.drawLine(line, lineHeight, line, screenSize.height - lineHeight);
+        g.drawLine(line, lineHeight+player.getVerticalOrientation(), line, screenSize.height - lineHeight+player.getVerticalOrientation());
     }
 
     private void paintBackground(Graphics g, Dimension screenSize) {
         g.setColor(Color.darkGray);
-        g.fillRect(0,0, screenSize.width, screenSize.height/2);
+        g.fillRect(0,0, screenSize.width, screenSize.height/2+player.getVerticalOrientation());
         g.setColor(Color.gray);
-        g.fillRect(0, screenSize.height/2, screenSize.width, screenSize.height);
+        g.fillRect(0, screenSize.height/2+player.getVerticalOrientation(), screenSize.width, screenSize.height);
     }
 }
