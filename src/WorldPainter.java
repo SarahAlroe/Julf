@@ -11,7 +11,6 @@ class WorldPainter extends Component {
     private final WorldMap worldMap;
     private final Config config;
     private final Player player;
-    private final WorldObject testWorldObject;
     private TextureHandler textureHandler;
     private Dimension screenSize;
     private BufferedImage collideTexture;
@@ -22,8 +21,6 @@ class WorldPainter extends Component {
         worldMap = main.getWorldMap();
         screenSize = getPreferredSize();
         textureHandler = TextureHandler.getInstance();
-        testWorldObject = new WorldObject(new Point2D.Double(10d, 10d), -65536);
-        WorldObjectHandler.getInstance().addWorldObject(testWorldObject);
     }
 
     public Dimension getPreferredSize() {
@@ -100,7 +97,7 @@ class WorldPainter extends Component {
         ArrayList<WorldObject> worldObjects = WorldObjectHandler.getInstance().getWorldObjects();
         for (int i = 0; i < worldObjects.size(); i++) {
             WorldObject worldObject = worldObjects.get(i);
-            //if (worldObject.isVisibleFrom(playerPos, playerOrient, fovR)) {
+            if (worldObject.isVisibleFrom(playerPos, playerOrient, fovR)) {
             BufferedImage worldObjectTexture = TextureHandler.getInstance().getTexture(worldObject.getTextureID());
             double objectDistance = worldObject.getDistanceFrom(playerPos);
             double verticalAngle = Math.atan(WALL_HEIGHT / (2d * objectDistance));
@@ -114,7 +111,7 @@ class WorldPainter extends Component {
                     g.drawImage(worldObjectTexture, startLine + l, roofLineHeight + player.getVerticalOrientation(), startLine + l + 1, screenSize.height - roofLineHeight + player.getVerticalOrientation(), textureColumn, 0, textureColumn + 1, worldObjectTexture.getHeight(), this);
                 }
             }
-            // }
+             }
         }
     }
 

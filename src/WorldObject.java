@@ -22,9 +22,12 @@ public class WorldObject implements Comparable<WorldObject>{
         return (MathUtils.angleClamp(-1*Math.atan2(refPoint.getY(),refPoint.getX())+Math.PI/2));
     }
     public boolean isVisibleFrom(Point2D.Double otherPoint, double angle, double fovRadians){
+        if (getDistanceFrom(otherPoint)>Config.getInstance().getMaxLength()){
+            return false;
+        }
         double itemAngle= getAngleFrom(otherPoint);
-        double minAngle = MathUtils.angleClamp(angle-(fovRadians/2d));
-        double maxAngle = MathUtils.angleClamp(angle+(fovRadians/2d));
+        double minAngle = MathUtils.angleClamp(angle-(fovRadians/4));
+        double maxAngle = MathUtils.angleClamp(angle+(fovRadians));
         if (minAngle<maxAngle){
             return ((itemAngle>minAngle) && (itemAngle<maxAngle));
         } else{
@@ -35,6 +38,6 @@ public class WorldObject implements Comparable<WorldObject>{
     @Override
     public int compareTo(WorldObject o) {
         Player player = Player.getInstance();
-        return (int) (getDistanceFrom(player.getPoint())-o.getDistanceFrom(player.getPoint()));
+        return (int) (o.getDistanceFrom(player.getPoint())-getDistanceFrom(player.getPoint()));
     }
 }
