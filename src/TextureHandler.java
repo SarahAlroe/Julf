@@ -16,6 +16,7 @@ public class TextureHandler {
         if (!textureExists(textureID)) {
             String textureName = Integer.toHexString(textureID).substring(2);
             textures.put(textureID, ImageHelper.loadImage(textureName));
+            System.out.println(textureID);
         }
 
     }

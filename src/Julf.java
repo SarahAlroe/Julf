@@ -49,7 +49,8 @@ public class Julf extends JApplet {
         BufferedImage mapFile = ImageHelper.loadImage("map3");
         conf = Config.getInstance();
         worldMap = new WorldMap(this, mapFile);
-        player = new Player(6.0, 6.0);
+        player = Player.getInstance();
+        player.setPos(6d,6d);
         player.setMap(worldMap);
         gameEventBroadcaster = GameEventBroadcaster.getInstance();
         textureHandler = TextureHandler.getInstance();

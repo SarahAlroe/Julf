@@ -1,7 +1,16 @@
+import java.awt.geom.Point2D;
+
 /**
  * Created by silasa on 8/20/16.
  */
 class Player implements GameEventListener {
+
+    public static Player getInstance() {
+        return instance;
+    }
+
+
+    private static Player instance = new Player(0d,0d);
     private double orientation;
     private double x;
     private double y;
@@ -33,6 +42,8 @@ class Player implements GameEventListener {
     public double[] getPos() {
         return new double[]{x, y};
     }
+
+    public Point2D.Double getPoint() {return new Point2D.Double(x,y);}
 
     public double getOrientation() {
         return orientation;
@@ -149,7 +160,7 @@ class Player implements GameEventListener {
     }
 
     public void rotate(double angle) {
-        orientation += angle;
+        orientation = MathUtils.angleClamp(orientation+angle);
 
     }
 }
