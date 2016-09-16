@@ -92,6 +92,7 @@ class WorldPainter extends Component {
                 int textureColumn = (int) Math.round((currentRayPosition.x + currentRayPosition.y) * collideTexture.getWidth()) % collideTexture.getWidth();
                 g.drawImage(collideTexture, line, roofLineHeight + player.getVerticalOrientation(), line + 1, screenSize.height - roofLineHeight + player.getVerticalOrientation(), textureColumn, 0, textureColumn + 1, collideTexture.getHeight(), this);
             } else {
+                lineDepths[line] = maxLength;
                 drawFog(g, line);
             }
         }

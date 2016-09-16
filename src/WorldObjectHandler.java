@@ -1,3 +1,5 @@
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +23,25 @@ public class WorldObjectHandler {
 
     public void addWorldObject (WorldObject object){
         worldObjects.add(object);
+    }
+
+    public void addObjectsFromMap(BufferedImage map){
+        int mapWidth = map.getWidth();
+        int mapHeight = map.getHeight();
+        Config config = Config.getInstance();
+        TextureHandler textureHandler = TextureHandler.getInstance();
+        int x = 0;
+        while (x < mapWidth) {
+            int y = 0;
+            while (y < mapHeight) {
+                if (map.getRGB(x, y) != config.getEmptyColor()){
+                    addWorldObject(new WorldObject(new Point2D.Double((double)x,(double)y), map.getRGB(x, y)));
+                    textureHandler.addTextureIfNew(map.getRGB(x,y));
+                }
+                y++;
+            }
+            x++;
+        }
     }
 
 }

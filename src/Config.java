@@ -9,6 +9,11 @@ class Config {
     private double maxLength = 30.0;
     private double incLength = 0.01;
     private int emptyColor = -16777216;
+    private boolean headBobbing = false;
+
+    public static Config getInstance() {
+        return instance;
+    }
 
     public boolean isHeadBobbing() {
         return headBobbing;
@@ -16,12 +21,6 @@ class Config {
 
     public void setHeadBobbing(boolean headBobbing) {
         this.headBobbing = headBobbing;
-    }
-
-    private boolean headBobbing = true;
-
-    public static Config getInstance() {
-        return instance;
     }
 
     public int getFov() {
