@@ -25,18 +25,20 @@ public class WorldObjectHandler {
         worldObjects.add(object);
     }
 
+    public void addObjectsFromMap(String mapName){
+        addObjectsFromMap(FileHelper.loadMapCollisionImage(mapName));
+    }
+
     public void addObjectsFromMap(BufferedImage map){
         int mapWidth = map.getWidth();
         int mapHeight = map.getHeight();
         Config config = Config.getInstance();
-        TextureHandler textureHandler = TextureHandler.getInstance();
         int x = 0;
         while (x < mapWidth) {
             int y = 0;
             while (y < mapHeight) {
                 if (map.getRGB(x, y) != config.getEmptyColor()){
                     addWorldObject(new WorldObject(new Point2D.Double((double)x,(double)y), map.getRGB(x, y)));
-                    textureHandler.addTextureIfNew(map.getRGB(x,y));
                 }
                 y++;
             }

@@ -1,18 +1,25 @@
 import java.awt.geom.Point2D;
+import org.json.*;
 
 /**
  * Created by silasa on 8/30/16.
  */
 public class WorldObject implements Comparable<WorldObject>{
     private Point2D.Double objectPosition;
-    private int textureID;
-    public WorldObject(Point2D.Double objectPosition, int textureID){
+    private int typeID;
+    public WorldObject(Point2D.Double objectPosition, int typeID){
         this.objectPosition=objectPosition;
-        this.textureID=textureID;
+        this.typeID = typeID;
     }
 
-    public int getTextureID() {
-        return textureID;
+    public WorldObject(String jSONAnno){
+        JSONObject data = new JSONObject(jSONAnno);
+        this.objectPosition=new Point2D.Double(data.getDouble("xPos"),data.getDouble("yPos"));
+        this.typeID = data.getInt("typeID");
+    }
+
+    public int getTypeID() {
+        return typeID;
     }
     public double getDistanceFrom(Point2D.Double otherPoint){
         return objectPosition.distance(otherPoint);

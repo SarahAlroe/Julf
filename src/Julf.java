@@ -46,16 +46,19 @@ public class Julf extends JApplet {
     }
 
     private void initGameElements() {
-        BufferedImage mapFile = ImageHelper.loadImage("map3");
-        BufferedImage worldObjectMapFile = ImageHelper.loadImage("map3_o");
+        BufferedImage mapFile = FileHelper.loadMapCollisionImage("map3");
+        BufferedImage worldObjectMapFile = FileHelper.loadMapWorldObjectImage("map3");
         conf = Config.getInstance();
-        worldMap = new WorldMap(this, mapFile);
+        worldMap = new WorldMap(mapFile);
+        WOTypeHandler.getInstance().loadMapWorldObjectTypes("map3");
         WorldObjectHandler.getInstance().addObjectsFromMap(worldObjectMapFile);
         player = Player.getInstance();
         player.setPos(6d,6d);
         player.setMap(worldMap);
         gameEventBroadcaster = GameEventBroadcaster.getInstance();
         textureHandler = TextureHandler.getInstance();
+        textureHandler.addTexturesFromMap(mapFile);
+        textureHandler.addTexturesFromWOType();
     }
 
     private void setupPanel() {

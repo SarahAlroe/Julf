@@ -98,7 +98,7 @@ class WorldPainter extends Component {
         for (int i = 0; i < worldObjects.size(); i++) {
             WorldObject worldObject = worldObjects.get(i);
             if (worldObject.isVisibleFrom(playerPos, playerOrient, fovR)) {
-            BufferedImage worldObjectTexture = TextureHandler.getInstance().getTexture(worldObject.getTextureID());
+            BufferedImage worldObjectTexture = TextureHandler.getInstance().getTexture(worldObject.getTypeID());
             double objectDistance = worldObject.getDistanceFrom(playerPos);
             double verticalAngle = Math.atan(WALL_HEIGHT / (2d * objectDistance));
             int lineHeight = (int) (screenSize.height / Math.tan(fovR) * Math.tan(verticalAngle));
