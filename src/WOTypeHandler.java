@@ -42,8 +42,8 @@ public class WOTypeHandler {
             if (woType.getID().equals(id)) {
                 return;
             }
-            addWorldObjectFromId(id);
         }
+        addWorldObjectFromId(id);
     }
 
     private void addWorldObjectFromId(String id) {

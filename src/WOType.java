@@ -6,6 +6,7 @@ import org.json.JSONObject;
 public class WOType {
     JSONObject properties;
     public WOType(String Json) {
+        System.out.println(Json);
         properties = new JSONObject(Json);
     }
     public String getString(String key){

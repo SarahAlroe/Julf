@@ -1,7 +1,8 @@
+import sun.misc.IOUtils;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -49,9 +50,34 @@ public class FileHelper {
         return loadImage(TEXTURE_DIRECTORY+textureName+TEXTURE_EXTENSION);
     }
     public static String loadWOString(String id) throws IOException {
-        byte[] encoded = Files.readAllBytes(Paths.get(WO_DIRECTORY+id+WO_EXTENSION));
-        return new String(encoded, StandardCharsets.UTF_8);
+        String filePath = WO_DIRECTORY + id + WO_EXTENSION;
+        return loadTextFile(filePath);
     }
+
+    private static String loadTextFile(String filePath) throws FileNotFoundException {
+        File file = new File(filePath);
+        System.out.println(file.getAbsolutePath());
+        FileInputStream fileInputStream = new FileInputStream(file);
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
+        StringBuilder stringBuilder = new StringBuilder();
+        String line;
+        try {
+            while ((line = bufferedReader.readLine())!=null){
+                stringBuilder.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                bufferedReader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        String fileContents = stringBuilder.toString();
+        return fileContents;
+    }
+
     public static String getIdFromRgb(int rgb) {
         return Integer.toHexString(rgb).substring(2);
     }

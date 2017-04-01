@@ -16,6 +16,15 @@ class WorldMap {
         mapHeight = map.getHeight();
         mapTable = new int[mapWidth][mapHeight];
         config = Config.getInstance();
+        int x = 0;
+        while (x < mapWidth) {
+            int y = 0;
+            while (y < mapHeight) {
+                mapTable[x][y] = map.getRGB(x, y);
+                y++;
+            }
+            x++;
+        }
     }
 
     public WorldMap(String mapName){
