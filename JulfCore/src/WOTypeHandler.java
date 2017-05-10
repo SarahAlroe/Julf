@@ -54,4 +54,12 @@ public class WOTypeHandler {
         }
 
     }
+    public boolean objectTypeExists(int id) {
+        for (WOType woType : woTypes) {
+            if (woType.getID().equals(FileHelper.getIdFromRgb(id))) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

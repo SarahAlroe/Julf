@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+message UpdateWorldObject {
+    string objectId = 1;
+    int32 typeId = 2;
+    double xPos = 3;
+    double yPos = 4;
+    double rotation = 5;
+};
+
+message DestroyWorldObject {
+    string objectId = 1;
+};
+
+message ResetPlayer {
+    string playerId = 1;
+    double xPos = 2;
+    double yPos = 3;
+    double rotation = 4;
+}
+
+message Move {
+    string playerId = 1;
+    double xPos = 2;
+    double yPos = 3;
+    double rotation = 4;
+}
+
+message Ping {
+    int64 timeStamp = 1;
+}
+message Pong {
+    int64 timestamp = 1;
+}
+
+message RequestInit {
+    Ping ping = 1;
+}
+
+message Init {
+    string mapName = 2;
+}
+
+message RequestUpdate {
+    string playerId=1;
+}
+
+message ServerMessage {
+    Ping ping = 1;
+    Pong pong = 2;
+    repeated UpdateWorldObject updateWorldObjectMessages = 3;
+    repeated DestroyWorldObject destroyWorldObjectMessages = 4;
+    ResetPlayer resetPlayerMessage = 5;
+    Init init = 6;
+}
+
+message ClientMessage {
+    Ping ping = 1;
+    Pong pong = 2;
+    Move move = 3;
+    RequestInit requestInit = 4;
+    RequestUpdate requestUpdate = 5;
+}

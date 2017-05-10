@@ -11,7 +11,6 @@ public class Item {
     void first(){
         if (itemStatus == ItemStatus.IDLE){
             itemStatus = ItemStatus.FIRE;
-
         }
     }
     void second(){

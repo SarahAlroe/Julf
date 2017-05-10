@@ -1,4 +1,6 @@
 import java.awt.geom.Point2D;
+import java.util.UUID;
+
 import org.json.*;
 
 /**
@@ -7,15 +9,31 @@ import org.json.*;
 public class WorldObject implements Comparable<WorldObject>{
     private Point2D.Double objectPosition;
     private int typeID;
+    private UUID uid;
+    private double objectRotation;
+
     public WorldObject(Point2D.Double objectPosition, int typeID){
         this.objectPosition=objectPosition;
         this.typeID = typeID;
+        this.uid = UUID.randomUUID();
+    }
+
+    public WorldObject(Point2D.Double objectPosition, int typeID, String uuid){
+        this.objectPosition=objectPosition;
+        this.typeID = typeID;
+        this.uid = UUID.fromString(uuid);
+        System.out.println(this.objectPosition.toString()+this.typeID+this.uid);
     }
 
     public WorldObject(String jSONAnno){
+        this(jSONAnno,UUID.randomUUID().toString());
+    }
+
+    public WorldObject(String jSONAnno, String uuid){
         JSONObject data = new JSONObject(jSONAnno);
         this.objectPosition=new Point2D.Double(data.getDouble("xPos"),data.getDouble("yPos"));
         this.typeID = data.getInt("typeID");
+        this.uid = UUID.fromString(uuid);
     }
 
     public int getTypeID() {
@@ -42,9 +60,34 @@ public class WorldObject implements Comparable<WorldObject>{
         }
     }
 
+    public UUID getUid() {
+        return uid;
+    }
+
+    public double getXPos(){
+        return objectPosition.getX();
+    }
+
+    public double getYPos(){
+        return objectPosition.getY();
+    }
+
+    public double getRotation(){
+        return objectRotation;
+    }
+
     @Override
     public int compareTo(WorldObject o) {
         Player player = Player.getInstance();
         return (int) (o.getDistanceFrom(player.getPoint())-getDistanceFrom(player.getPoint()));
+    }
+
+    public void setPosition(double xPos, double yPos, double rotation) {
+        this.objectPosition = new Point2D.Double(xPos,yPos);
+        this.objectRotation = rotation;
+    }
+
+    public void setTypeID(int typeID) {
+        this.typeID = typeID;
     }
 }

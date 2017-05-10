@@ -36,26 +36,33 @@ public class Julf extends JApplet {
     }
 
     public void initComponents() {
-        initGameElements();
+        conf = Config.getInstance();
+        worldMap = new WorldMap("map3");
+        player = Player.getInstance();
+        player.setPos(6d,6d);
+        player.setMap(worldMap);
+        gameEventBroadcaster = GameEventBroadcaster.getInstance();
+        textureHandler = TextureHandler.getInstance();
 
         setupPanel();
 
         startRepaintTimer();
 
         startKeyListener();
+
+        new NetClient(this).start();
     }
 
-    private void initGameElements() {
-        BufferedImage mapFile = FileHelper.loadMapCollisionImage("map3");
-        BufferedImage worldObjectMapFile = FileHelper.loadMapWorldObjectImage("map3");
-        conf = Config.getInstance();
+    public void initGameElements(String mapName) {
+        System.out.println("Starting map: "+mapName);
+        BufferedImage mapFile = FileHelper.loadMapCollisionImage(mapName);
+        //BufferedImage worldObjectMapFile = FileHelper.loadMapWorldObjectImage(mapName);
         worldMap = new WorldMap(mapFile);
-        WOTypeHandler.getInstance().loadMapWorldObjectTypes("map3");
-        WorldObjectHandler.getInstance().addObjectsFromMap(worldObjectMapFile);
+        WOTypeHandler.getInstance().loadMapWorldObjectTypes(mapName);
+        //WorldObjectHandler.getInstance().addObjectsFromMap(worldObjectMapFile);
         player = Player.getInstance();
         player.setPos(6d,6d);
         player.setMap(worldMap);
-        gameEventBroadcaster = GameEventBroadcaster.getInstance();
         textureHandler = TextureHandler.getInstance();
         textureHandler.addTexturesFromMap(mapFile);
         textureHandler.addTexturesFromWOType();

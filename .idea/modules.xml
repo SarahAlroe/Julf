@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Julf.iml" filepath="$PROJECT_DIR$/Julf.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JulfClient/JulfClient.iml" filepath="$PROJECT_DIR$/JulfClient/JulfClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JulfCore/JulfCore.iml" filepath="$PROJECT_DIR$/JulfCore/JulfCore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JulfDS/JulfDS.iml" filepath="$PROJECT_DIR$/JulfDS/JulfDS.iml" />
     </modules>
   </component>
 </project>

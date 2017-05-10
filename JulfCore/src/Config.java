@@ -10,6 +10,8 @@ class Config {
     private double incLength = 0.01;
     private int emptyColor = -16777216;
     private boolean headBobbing = false;
+    private int port = 1337;
+    private String mapName;
 
     public static Config getInstance() {
         return instance;
@@ -53,5 +55,17 @@ class Config {
 
     public void setEmptyColor(int emptyColor) {
         this.emptyColor = emptyColor;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setMapName(String mapName) {
+        this.mapName = mapName;
+    }
+
+    public String getMapName() {
+        return mapName;
     }
 }
